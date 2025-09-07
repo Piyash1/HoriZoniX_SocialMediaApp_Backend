@@ -54,20 +54,15 @@ MIDDLEWARE = [
 ]
 
 # CORS configuration
-if DEBUG:
-    # For development - allow all origins
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    # For production - specific origins only
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        # Add your frontend domain here when you deploy it
-        # "https://your-frontend-domain.vercel.app",
-        # "https://your-frontend-domain.netlify.app",
-    ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    # Add your frontend domain here when you deploy it
+    # "https://your-frontend-domain.vercel.app",
+    # "https://your-frontend-domain.netlify.app",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
