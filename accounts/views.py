@@ -293,6 +293,9 @@ def login_view(request):
         return Response({'error': 'Email not verified. Please check your inbox.'}, status=status.HTTP_403_FORBIDDEN)
 
     login(request, user)
+    print(f"Login successful for user: {user.email}")
+    print(f"Session key: {request.session.session_key}")
+    print(f"User authenticated: {request.user.is_authenticated}")
     return Response({
         'message': 'Logged in successfully.',
         'user': UserSerializer(user).data
@@ -325,6 +328,9 @@ def logout_view(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def me(request):
+    print(f"Me endpoint - User authenticated: {request.user.is_authenticated}")
+    print(f"Session key: {request.session.session_key}")
+    print(f"User: {request.user}")
     if not request.user.is_authenticated:
         return Response({'user': None})
     return Response({'user': UserSerializer(request.user, context={'request': request}).data})
