@@ -255,19 +255,19 @@ def register(request):
     try:
         signer = TimestampSigner()
         token = signer.sign(user.pk)
-        verify_url = f"{settings.FRONTEND_URL}/verify-email?" + urlencode({
-            'token': token
-        })
+        verify_url = f"{settings.FRONTEND_URL}/verify-email?token={token}"
         send_mail(
-            subject='Verify your HoriZonix email',
-            message=f'Click to verify your email: {verify_url}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=True,  # Changed to True to prevent email errors from breaking the response
+            'Verify your HoriZonix email',
+            f'Click to verify your email: {verify_url}',
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,  # Don't fail silently in production
         )
+        print(f"Verification email sent to {user.email}")
     except Exception as e:
-        print(f"Email sending error: {e}")  # Debug log
-        # Continue with registration even if email fails
+        print(f"Email sending failed: {e}")
+        # In production, you might want to log this to a proper logging service
+        # For now, we'll continue with registration even if email fails
 
     return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
