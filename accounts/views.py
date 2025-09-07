@@ -248,6 +248,9 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
         )
+        # Auto-verify email for now
+        user.is_email_verified = True
+        user.save()
     except Exception as e:
         print(f"Register error: {e}")  # Debug log
         return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
