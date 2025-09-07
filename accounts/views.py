@@ -263,11 +263,11 @@ def register(request):
             message=f'Click to verify your email: {verify_url}',
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
-            fail_silently=False,
+            fail_silently=True,  # Changed to True to prevent email errors from breaking the response
         )
-    except Exception:
-        # In production you would log this exception. For now, swallow to avoid leaking details.
-        pass
+    except Exception as e:
+        print(f"Email sending error: {e}")  # Debug log
+        # Continue with registration even if email fails
 
     return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
