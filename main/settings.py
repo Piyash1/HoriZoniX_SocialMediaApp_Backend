@@ -89,18 +89,10 @@ CORS_ALLOW_METHODS = [
 # ]
 
 # Session configuration for cross-origin requests
-if DEBUG:
-    # For local development with remote backend
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SAMESITE = 'Lax'
-    CSRF_COOKIE_SECURE = False
-else:
-    # For production
-    SESSION_COOKIE_SAMESITE = 'None'
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SAMESITE = 'None'
-    CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
@@ -112,6 +104,10 @@ CSRF_TRUSTED_ORIGINS = [
     # "https://your-frontend-domain.vercel.app",
     # "https://your-frontend-domain.netlify.app",
 ]
+
+# Additional CORS settings for cookies
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ['Set-Cookie']
 
 ROOT_URLCONF = 'main.urls'
 
