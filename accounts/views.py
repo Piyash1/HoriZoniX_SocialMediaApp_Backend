@@ -292,6 +292,9 @@ def login_view(request):
         return Response({'error': 'Email not verified. Please check your inbox.'}, status=status.HTTP_403_FORBIDDEN)
 
     login(request, user)
+    print(f"Login successful for user: {user.email}")
+    print(f"Session key: {request.session.session_key}")
+    print(f"User authenticated: {request.user.is_authenticated}")
     return Response({'message': 'Logged in successfully.'})
 
 
