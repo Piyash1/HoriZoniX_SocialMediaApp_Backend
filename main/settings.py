@@ -62,6 +62,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://horizonixsocialmediaappbackend-production.up.railway.app"
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",
