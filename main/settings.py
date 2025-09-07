@@ -43,7 +43,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'main.cors_middleware.CustomCorsMiddleware',  # Custom CORS middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,17 +53,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    # Add your frontend domain here when you deploy it
-    # "https://your-frontend-domain.vercel.app",
-    # "https://your-frontend-domain.netlify.app",
-]
-
+# CORS configuration - TEMPORARY FIX
+CORS_ALLOW_ALL_ORIGINS = True  # TEMPORARY - allows all origins
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -88,6 +78,15 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+# TODO: Replace with specific origins when frontend is deployed
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+#     "https://your-frontend-domain.vercel.app",
+# ]
 
 # Session configuration for cross-origin requests
 if DEBUG:
