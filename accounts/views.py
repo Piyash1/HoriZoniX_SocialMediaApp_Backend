@@ -292,25 +292,11 @@ def login_view(request):
     if not user.is_email_verified:
         return Response({'error': 'Email not verified. Please check your inbox.'}, status=status.HTTP_403_FORBIDDEN)
 
-    # Generate JWT tokens
-    try:
-        refresh = RefreshToken.for_user(user)
-        access_token = refresh.access_token
-        
-        return Response({
-            'message': 'Logged in successfully.',
-            'access': str(access_token),
-            'refresh': str(refresh),
-            'user': UserSerializer(user).data
-        })
-    except Exception as e:
-        print(f"JWT error: {e}")
-        # Fallback to session authentication
-        login(request, user)
-        return Response({
-            'message': 'Logged in successfully.',
-            'user': UserSerializer(user).data
-        })
+    login(request, user)
+    return Response({
+        'message': 'Logged in successfully.',
+        'user': UserSerializer(user).data
+    })
 
 
 @api_view(['POST'])
