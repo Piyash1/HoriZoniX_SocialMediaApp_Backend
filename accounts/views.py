@@ -220,33 +220,37 @@ def search_users(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
-    email = request.data.get('email', '').strip().lower()
-    username = request.data.get('username') or email
-    password = request.data.get('password')
-    first_name = request.data.get('first_name', '')
-    last_name = request.data.get('last_name', '')
+    try:
+        email = request.data.get('email', '').strip().lower()
+        username = request.data.get('username') or email
+        password = request.data.get('password')
+        first_name = request.data.get('first_name', '')
+        last_name = request.data.get('last_name', '')
 
-    if not email or not password:
-        return Response({'error': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not password:
+            return Response({'error': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Validate password strength
-    password_validation = validate_password_strength(password)
-    if not password_validation['valid']:
-        return Response({
-            'error': 'Password does not meet requirements.',
-            'password_errors': password_validation['errors']
-        }, status=status.HTTP_400_BAD_REQUEST)
+        # Validate password strength
+        password_validation = validate_password_strength(password)
+        if not password_validation['valid']:
+            return Response({
+                'error': 'Password does not meet requirements.',
+                'password_errors': password_validation['errors']
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-    if User.objects.filter(email=email).exists():
-        return Response({'error': 'Email already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'Email already in use.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(
-        username=username,
-        email=email,
-        password=password,
-        first_name=first_name,
-        last_name=last_name,
-    )
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+        )
+    except Exception as e:
+        print(f"Register error: {e}")  # Debug log
+        return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     # Send verification email
     try:
         signer = TimestampSigner()
