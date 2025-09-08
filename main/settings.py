@@ -54,7 +54,22 @@ MIDDLEWARE = [
 ]
 
 # CORS configuration
-CORS_ALLOW_ALL_ORIGINS = True  # TEMPORARY - allows all origins
+if DEBUG:
+    # Development: Allow all origins
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    # Production: Specific origins only
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        # Add your frontend domain here when deployed
+        "https://your-frontend-domain.vercel.app",
+        "https://your-frontend-domain.netlify.app",
+    ]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -79,15 +94,6 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# TODO: Replace with specific origins when frontend is deployed
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173",
-#     "https://your-frontend-domain.vercel.app",
-# ]
-
 # Session configuration for cross-origin requests
 if DEBUG:
     # For local development with remote backend
@@ -97,14 +103,16 @@ if DEBUG:
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
+    SESSION_COOKIE_DOMAIN = None
 else:
-    # For production
+    # For production - HTTPS required
     SESSION_COOKIE_SAMESITE = 'None'
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SAMESITE = 'None'
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
+    SESSION_COOKIE_DOMAIN = None  # Let Django handle domain
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
@@ -113,8 +121,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://horizonixsocialmediaappbackend-production.up.railway.app",
     # Add your frontend domain here when you deploy it
-    # "https://your-frontend-domain.vercel.app",
-    # "https://your-frontend-domain.netlify.app",
+    "https://your-frontend-domain.vercel.app",
+    "https://your-frontend-domain.netlify.app",
 ]
 
 ROOT_URLCONF = 'main.urls'

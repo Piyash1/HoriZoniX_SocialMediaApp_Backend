@@ -319,6 +319,18 @@ def csrf(request):
     return Response({'detail': 'CSRF cookie set'})
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    """Simple health check endpoint to test connection"""
+    return Response({
+        'status': 'ok',
+        'message': 'Backend is running',
+        'timestamp': request.META.get('HTTP_DATE', 'unknown'),
+        'origin': request.META.get('HTTP_ORIGIN', 'unknown')
+    })
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def verify_email(request):
