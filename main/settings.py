@@ -54,9 +54,15 @@ MIDDLEWARE = [
 ]
 
 # CORS configuration
-# For now, allow all origins to fix CORS issues
-# You can restrict this later when you deploy your frontend
-CORS_ALLOW_ALL_ORIGINS = True
+# Allow credentials and restrict allowed origins so cookies work cross-site
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://horizonix.vercel.app",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -108,7 +114,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://horizonixsocialmediaappbackend-production.up.railway.app",
     # Add your frontend domain here when you deploy it
-    "https://your-frontend-domain.vercel.app",
+    "https://horizonix.vercel.app",
     "https://your-frontend-domain.netlify.app",
 ]
 
