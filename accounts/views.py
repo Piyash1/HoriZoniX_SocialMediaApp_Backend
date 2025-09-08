@@ -2,7 +2,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .serializers import UserSerializer
@@ -249,9 +248,6 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
         )
-        # Auto-verify email for now
-        user.is_email_verified = True
-        user.save()
     except Exception as e:
         print(f"Register error: {e}")  # Debug log
         return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -293,32 +289,8 @@ def login_view(request):
         return Response({'error': 'Email not verified. Please check your inbox.'}, status=status.HTTP_403_FORBIDDEN)
 
     login(request, user)
-    print(f"Login successful for user: {user.email}")
-    print(f"Session key: {request.session.session_key}")
-    print(f"User authenticated: {request.user.is_authenticated}")
-    
-    return Response({
-        'message': 'Logged in successfully.',
-        'user': UserSerializer(user).data
-    })
+    return Response({'message': 'Logged in successfully.'})
 
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def refresh_token_view(request):
-    refresh_token = request.data.get('refresh')
-    if not refresh_token:
-        return Response({'error': 'Refresh token is required.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        refresh = RefreshToken(refresh_token)
-        access_token = refresh.access_token
-        return Response({
-            'access': str(access_token),
-            'refresh': str(refresh)
-        })
-    except Exception as e:
-        return Response({'error': 'Invalid refresh token.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 def logout_view(request):
@@ -329,9 +301,6 @@ def logout_view(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def me(request):
-    print(f"Me endpoint - User authenticated: {request.user.is_authenticated}")
-    print(f"Session key: {request.session.session_key}")
-    print(f"User: {request.user}")
     if not request.user.is_authenticated:
         return Response({'user': None})
     return Response({'user': UserSerializer(request.user, context={'request': request}).data})

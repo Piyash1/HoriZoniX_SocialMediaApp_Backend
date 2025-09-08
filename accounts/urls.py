@@ -5,7 +5,6 @@ urlpatterns = [
     # Django auth endpoints
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
-    path('refresh/', views.refresh_token_view, name='refresh-token'),
     path('logout/', views.logout_view, name='logout'),
     path('me/', views.me, name='me'),
     path('csrf/', views.csrf, name='csrf'),
