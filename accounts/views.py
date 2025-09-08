@@ -40,25 +40,43 @@ def get_user_profile_by_id(request, user_id: int):
 @parser_classes([MultiPartParser, FormParser])
 def update_user_profile(request):
     """Update current user profile. Accepts JSON or multipart for image uploads."""
-    user = request.user
-    # Handle simple JSON fields via serializer
-    serializer = UserSerializer(user, data=request.data, partial=True, context={'request': request})
-    if serializer.is_valid():
-        serializer.save()
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        print(f"Profile update request from: {request.META.get('HTTP_ORIGIN', 'No origin')}")
+        print(f"Profile update data: {request.data}")
+        print(f"Profile update files: {request.FILES}")
+        print(f"User: {request.user}")
+        
+        user = request.user
+        # Handle simple JSON fields via serializer
+        serializer = UserSerializer(user, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            print("Serializer validation passed")
+        else:
+            print(f"Serializer validation failed: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Handle optional image files
-    profile_picture = request.FILES.get('profile_picture')
-    if profile_picture:
-        user.profile_picture = profile_picture
-        user.save(update_fields=['profile_picture'])
-    cover_photo = request.FILES.get('cover_photo')
-    if cover_photo:
-        user.cover_photo = cover_photo
-        user.save(update_fields=['cover_photo'])
+        # Handle optional image files
+        profile_picture = request.FILES.get('profile_picture')
+        if profile_picture and profile_picture.size > 0:
+            print(f"Updating profile picture: {profile_picture}")
+            user.profile_picture = profile_picture
+            user.save(update_fields=['profile_picture'])
+            print("Profile picture updated successfully")
+            
+        cover_photo = request.FILES.get('cover_photo')
+        if cover_photo and cover_photo.size > 0:
+            print(f"Updating cover photo: {cover_photo}")
+            user.cover_photo = cover_photo
+            user.save(update_fields=['cover_photo'])
+            print("Cover photo updated successfully")
 
-    return Response(UserSerializer(user, context={'request': request}).data)
+        return Response(UserSerializer(user, context={'request': request}).data)
+    except Exception as e:
+        print(f"Profile update error: {e}")
+        import traceback
+        traceback.print_exc()
+        return Response({'error': f'Profile update failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
