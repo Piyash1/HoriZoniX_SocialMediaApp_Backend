@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from .serializers import UserSerializer
 from .models import ConnectionRequest
 from .validators import validate_password_strength
@@ -315,6 +315,7 @@ def login_view(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@csrf_exempt
 def logout_view(request):
     logout(request)
     return Response({'message': 'Logged out successfully.'})
