@@ -313,6 +313,9 @@ def me(request):
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def csrf(request):
+    # Debug: log the request
+    print(f"CSRF request from: {request.META.get('HTTP_ORIGIN', 'No origin')}")
+    print(f"CSRF request headers: {dict(request.headers)}")
     return Response({'detail': 'CSRF cookie set'})
 
 

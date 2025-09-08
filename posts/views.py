@@ -17,6 +17,11 @@ def list_create_posts(request):
         return Response(serializer.data)
 
     # POST - create
+    print(f"POST request from: {request.META.get('HTTP_ORIGIN', 'No origin')}")
+    print(f"POST request headers: {dict(request.headers)}")
+    print(f"POST request data: {request.data}")
+    print(f"POST request files: {request.FILES}")
+    
     content = request.data.get('content', '')
     post = Post.objects.create(author=request.user, content=content)
     # accept multiple files under 'images'
