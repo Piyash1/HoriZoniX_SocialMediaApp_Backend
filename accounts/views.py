@@ -296,10 +296,26 @@ def login_view(request):
     print(f"Login successful for user: {user.email}")
     print(f"Session key: {request.session.session_key}")
     print(f"User authenticated: {request.user.is_authenticated}")
-    return Response({
+    
+    # Ensure session is saved
+    request.session.save()
+    
+    response = Response({
         'message': 'Logged in successfully.',
         'user': UserSerializer(user).data
     })
+    
+    # Set session cookie explicitly
+    response.set_cookie(
+        'sessionid',
+        request.session.session_key,
+        max_age=86400,  # 24 hours
+        httponly=True,
+        samesite='None',
+        secure=False
+    )
+    
+    return response
 
 
 @api_view(['POST'])
