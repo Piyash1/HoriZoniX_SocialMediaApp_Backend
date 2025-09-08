@@ -289,7 +289,10 @@ def login_view(request):
         return Response({'error': 'Email not verified. Please check your inbox.'}, status=status.HTTP_403_FORBIDDEN)
 
     login(request, user)
-    return Response({'message': 'Logged in successfully.'})
+    return Response({
+        'message': 'Logged in successfully.',
+        'user': UserSerializer(user, context={'request': request}).data
+    })
 
 
 @api_view(['POST'])

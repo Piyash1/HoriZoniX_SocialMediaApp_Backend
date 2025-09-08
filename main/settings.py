@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS configuration - TEMPORARY FIX
+# CORS configuration
 CORS_ALLOW_ALL_ORIGINS = True  # TEMPORARY - allows all origins
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -95,12 +95,16 @@ if DEBUG:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
 else:
     # For production
     SESSION_COOKIE_SAMESITE = 'None'
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SAMESITE = 'None'
     CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
@@ -249,16 +253,8 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Cookies (dev-safe defaults; adjust for production)
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
-
-ROOT_URLCONF = 'main.urls'
 
 # Email configuration (defaults to console backend in dev)
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
