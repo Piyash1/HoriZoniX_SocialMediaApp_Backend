@@ -66,6 +66,12 @@ def retrieve_update_delete_post(request, pk: int):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def toggle_like(request, pk: int):
+    # Debug authentication
+    print(f"Like request - User authenticated: {request.user.is_authenticated}")
+    print(f"Like request - User: {request.user}")
+    print(f"Like request - Session key: {request.session.session_key}")
+    print(f"Like request - Headers: {dict(request.headers)}")
+    
     try:
         post = Post.objects.get(pk=pk)
     except Post.DoesNotExist:

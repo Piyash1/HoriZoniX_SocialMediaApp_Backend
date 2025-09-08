@@ -54,21 +54,9 @@ MIDDLEWARE = [
 ]
 
 # CORS configuration
-if DEBUG:
-    # Development: Allow all origins
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    # Production: Specific origins only
-    CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        # Add your frontend domain here when deployed
-        "https://your-frontend-domain.vercel.app",
-        "https://your-frontend-domain.netlify.app",
-    ]
+# For now, allow all origins to fix CORS issues
+# You can restrict this later when you deploy your frontend
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -95,24 +83,14 @@ CORS_ALLOW_METHODS = [
 ]
 
 # Session configuration for cross-origin requests
-if DEBUG:
-    # For local development with remote backend
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SAMESITE = 'Lax'
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_HTTPONLY = True
-    CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
-    SESSION_COOKIE_DOMAIN = None
-else:
-    # For production - HTTPS required
-    SESSION_COOKIE_SAMESITE = 'None'
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SAMESITE = 'None'
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
-    SESSION_COOKIE_DOMAIN = None  # Let Django handle domain
+# Use Lax and False for both development and production when frontend is HTTP
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
+SESSION_COOKIE_DOMAIN = None
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
