@@ -274,26 +274,14 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
         )
+        # Auto-verify email for simplified flow
+        if hasattr(user, 'is_email_verified'):
+            user.is_email_verified = True
+            user.save(update_fields=['is_email_verified'])
     except Exception as e:
         print(f"Register error: {e}")  # Debug log
         return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # Send verification email
-    try:
-        signer = TimestampSigner()
-        token = signer.sign(user.pk)
-        verify_url = f"{settings.FRONTEND_URL}/verify-email?token={token}"
-        send_mail(
-            'Verify your HoriZonix email',
-            f'Click to verify your email: {verify_url}',
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,  # Don't fail silently in production
-        )
-        print(f"Verification email sent to {user.email}")
-    except Exception as e:
-        print(f"Email sending failed: {e}")
-        # In production, you might want to log this to a proper logging service
-        # For now, we'll continue with registration even if email fails
+    # Skip sending verification email (simplified flow)
 
     return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
@@ -311,8 +299,7 @@ def login_view(request):
     if user is None:
         return Response({'error': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not user.is_email_verified:
-        return Response({'error': 'Email not verified. Please check your inbox.'}, status=status.HTTP_403_FORBIDDEN)
+    # Skip email verification check for simplified flow
 
     login(request, user)
     return Response({
