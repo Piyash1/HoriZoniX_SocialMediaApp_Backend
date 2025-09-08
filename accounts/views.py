@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.middleware.csrf import get_token
 from .serializers import UserSerializer
 from .models import ConnectionRequest
 from .validators import validate_password_strength
@@ -341,10 +342,9 @@ def me(request):
 @permission_classes([AllowAny])
 @ensure_csrf_cookie
 def csrf(request):
-    # Debug: log the request
-    print(f"CSRF request from: {request.META.get('HTTP_ORIGIN', 'No origin')}")
-    print(f"CSRF request headers: {dict(request.headers)}")
-    return Response({'detail': 'CSRF cookie set'})
+    # Return CSRF token in JSON so frontend can use it cross-site
+    token = get_token(request)
+    return Response({'csrftoken': token, 'detail': 'CSRF cookie set'})
 
 
 @api_view(['GET'])

@@ -64,6 +64,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://horizonix.vercel.app",
 ]
 
+# Also allow common Vercel preview URLs
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.vercel\.app$",
+]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -116,6 +121,8 @@ CSRF_TRUSTED_ORIGINS = [
     # Add your frontend domain here when you deploy it
     "https://horizonix.vercel.app",
     "https://your-frontend-domain.netlify.app",
+    # Trust all Vercel preview deployments
+    "https://*.vercel.app",
 ]
 
 ROOT_URLCONF = 'main.urls'
