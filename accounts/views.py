@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model, authenticate, login, logout
@@ -13,6 +13,13 @@ from django.core.mail import send_mail
 from urllib.parse import urlencode
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Q
+from rest_framework.authentication import SessionAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    """Session authentication that skips CSRF enforcement (for specific views)."""
+    def enforce_csrf(self, request):
+        return
 
 User = get_user_model()
 
@@ -315,6 +322,7 @@ def login_view(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([CsrfExemptSessionAuthentication])
 @csrf_exempt
 def logout_view(request):
     logout(request)
