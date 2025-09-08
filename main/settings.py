@@ -83,11 +83,20 @@ CORS_ALLOW_METHODS = [
 ]
 
 # Session configuration for cross-origin requests
-# Use Lax and False for both development and production when frontend is HTTP
-SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False
+# Configure based on environment
+if DEBUG:
+    # Development: Use Lax and False for HTTP
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SECURE = False
+else:
+    # Production: Use None and True for HTTPS
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SAMESITE = 'None'
+    CSRF_COOKIE_SECURE = True
+
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
 SESSION_COOKIE_DOMAIN = None
