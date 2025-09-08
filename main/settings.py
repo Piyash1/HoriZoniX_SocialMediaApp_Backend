@@ -54,8 +54,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS configuration - TEMPORARY FIX
-CORS_ALLOW_ALL_ORIGINS = True  # TEMPORARY - allows all origins
+# CORS configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -80,20 +85,11 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# TODO: Replace with specific origins when frontend is deployed
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173",
-#     "https://your-frontend-domain.vercel.app",
-# ]
-
 # Session configuration for cross-origin requests
 # For local development with remote backend
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = False
 
 CSRF_TRUSTED_ORIGINS = [
