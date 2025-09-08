@@ -314,6 +314,7 @@ def login_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def logout_view(request):
     logout(request)
     return Response({'message': 'Logged out successfully.'})
