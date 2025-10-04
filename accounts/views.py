@@ -311,20 +311,25 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
         )
-        # Send email verification
-        try:
-            send_verification_email(user)
-        except Exception as email_error:
-            print(f"Email sending failed: {email_error}")
-            # Don't fail registration if email fails, but log it
-            pass
+        # Auto-verify email for direct signup (no email confirmation)
+        user.is_email_verified = True
+        user.save(update_fields=['is_email_verified'])
+        
+        # TODO: Uncomment when you want email verification
+        # # Send email verification
+        # try:
+        #     send_verification_email(user)
+        # except Exception as email_error:
+        #     print(f"Email sending failed: {email_error}")
+        #     # Don't fail registration if email fails, but log it
+        #     pass
         
     except Exception as e:
         print(f"Register error: {e}")  # Debug log
         return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({
-        'message': 'Registration successful. Please check your email to verify your account.',
+        'message': 'Registration successful. You can now sign in.',
         'user': UserSerializer(user).data
     }, status=status.HTTP_201_CREATED)
 
@@ -342,12 +347,13 @@ def login_view(request):
     if user is None:
         return Response({'error': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Check if email is verified
-    if not user.is_email_verified:
-        return Response({
-            'error': 'Please verify your email address before logging in.',
-            'email_verified': False
-        }, status=status.HTTP_400_BAD_REQUEST)
+    # TODO: Uncomment when you want email verification
+    # # Check if email is verified
+    # if not user.is_email_verified:
+    #     return Response({
+    #         'error': 'Please verify your email address before logging in.',
+    #         'email_verified': False
+    #     }, status=status.HTTP_400_BAD_REQUEST)
 
     login(request, user)
     return Response({
