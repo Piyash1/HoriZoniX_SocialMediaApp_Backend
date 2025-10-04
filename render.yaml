@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: horizonix-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn main.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DEBUG
+        value: False
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: NEON_HOST
+        value: ep-patient-lake-a168r1pr-pooler.ap-southeast-1.aws.neon.tech
+      - key: NEON_DATABASE
+        value: neondb
+      - key: NEON_USER
+        value: neondb_owner
+      - key: NEON_PASSWORD
+        value: npg_jaJ1HEqzy7VP
+      - key: NEON_PORT
+        value: 5432
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_USE_TLS
+        value: True
+      - key: EMAIL_USE_SSL
+        value: False
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: FRONTEND_URL
+        value: https://your-frontend-domain.vercel.app
+      - key: CLOUDINARY_URL
+        sync: false

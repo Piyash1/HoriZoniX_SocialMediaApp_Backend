@@ -24,6 +24,43 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 
 User = get_user_model()
 
+def send_verification_email(user):
+    """Send email verification to user"""
+    try:
+        signer = TimestampSigner()
+        token = signer.sign(str(user.pk))
+        
+        # Build verification URL
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173')
+        verify_url = f"{frontend_url}/verify-email?token={token}"
+        
+        subject = 'Verify your HoriZonix account'
+        message = f"""
+        Hi {user.first_name},
+        
+        Welcome to HoriZonix! Please verify your email address by clicking the link below:
+        
+        {verify_url}
+        
+        This link will expire in 24 hours.
+        
+        If you didn't create an account, please ignore this email.
+        
+        Best regards,
+        The HoriZonix Team
+        """
+        
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        print(f"Verification email sent to {user.email}")
+    except Exception as e:
+        print(f"Failed to send verification email: {e}")
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
@@ -274,16 +311,16 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
         )
-        # Auto-verify email for simplified flow
-        if hasattr(user, 'is_email_verified'):
-            user.is_email_verified = True
-            user.save(update_fields=['is_email_verified'])
+        # Send email verification
+        send_verification_email(user)
     except Exception as e:
         print(f"Register error: {e}")  # Debug log
         return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # Skip sending verification email (simplified flow)
 
-    return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+    return Response({
+        'message': 'Registration successful. Please check your email to verify your account.',
+        'user': UserSerializer(user).data
+    }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -299,7 +336,12 @@ def login_view(request):
     if user is None:
         return Response({'error': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Skip email verification check for simplified flow
+    # Check if email is verified
+    if not user.is_email_verified:
+        return Response({
+            'error': 'Please verify your email address before logging in.',
+            'email_verified': False
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     login(request, user)
     return Response({
@@ -363,3 +405,22 @@ def verify_email(request):
         return Response({'error': 'Token expired'}, status=status.HTTP_400_BAD_REQUEST)
     except (BadSignature, User.DoesNotExist):
         return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def resend_verification_email(request):
+    """Resend verification email"""
+    email = request.data.get('email', '').strip().lower()
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=email)
+        if user.is_email_verified:
+            return Response({'error': 'Email is already verified'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        send_verification_email(user)
+        return Response({'message': 'Verification email sent'})
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

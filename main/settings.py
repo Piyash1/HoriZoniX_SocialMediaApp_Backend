@@ -20,7 +20,17 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # DEBUG setting - can be set via environment variable or command line
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes', 'on')
 
-ALLOWED_HOSTS = ["*"]
+# Production security settings
+if not DEBUG:
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        '.onrender.com',  # Render domain
+        '.vercel.app',    # Vercel domain for frontend
+        'horizonix-backend.onrender.com',  # Your specific Render domain
+    ]
+else:
+    ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -56,18 +66,26 @@ MIDDLEWARE = [
 # CORS configuration
 # Allow credentials and restrict allowed origins so cookies work cross-site
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://horizonix.vercel.app",
-]
 
-# Also allow common Vercel preview URLs
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https:\/\/.*\.vercel\.app$",
-]
+if DEBUG:
+    # Development CORS settings
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    CORS_ALLOWED_ORIGIN_REGEXES = []
+else:
+    # Production CORS settings
+    CORS_ALLOWED_ORIGINS = [
+        "https://horizonix.vercel.app",
+        "https://horizonixsocialmediaapp.vercel.app",
+    ]
+    # Allow Vercel preview URLs
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https:\/\/.*\.vercel\.app$",
+    ]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -112,18 +130,20 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
 SESSION_COOKIE_DOMAIN = None
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://horizonixsocialmediaappbackend-production.up.railway.app",
-    # Add your frontend domain here when you deploy it
-    "https://horizonix.vercel.app",
-    "https://your-frontend-domain.netlify.app",
-    # Trust all Vercel preview deployments
-    "https://*.vercel.app",
-]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://horizonix.vercel.app",
+        "https://horizonixsocialmediaapp.vercel.app",
+        # Trust all Vercel preview deployments
+        "https://*.vercel.app",
+    ]
 
 ROOT_URLCONF = 'main.urls'
 
@@ -157,15 +177,18 @@ if DEBUG:
         }
     }
 else:
-    # Production: Use PostgreSQL
+    # Production: Use NeonDB PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'railway',
-            'USER': 'postgres',
-            'PASSWORD': os.getenv('PG_PASSWORD', 'RDcBeitHJKGYPxkGemNXjnKYZCtwcGze'),
-            'HOST': os.getenv('PG_HOST', 'tramway.proxy.rlwy.net'),
-            'PORT': os.getenv('PG_PORT', '47308'),
+            'NAME': os.getenv('NEON_DATABASE'),
+            'USER': os.getenv('NEON_USER'),
+            'PASSWORD': os.getenv('NEON_PASSWORD'),
+            'HOST': os.getenv('NEON_HOST'),
+            'PORT': os.getenv('NEON_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
         }
     }
 

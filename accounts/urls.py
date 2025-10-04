@@ -10,6 +10,7 @@ urlpatterns = [
     path('csrf/', views.csrf, name='csrf'),
     path('health/', views.health_check, name='health-check'),
     path('verify-email/', views.verify_email, name='verify-email'),
+    path('resend-verification/', views.resend_verification_email, name='resend-verification'),
 
     path('profile/', views.get_user_profile, name='user-profile'),
     path('profile/<int:user_id>/', views.get_user_profile_by_id, name='user-profile-by-id'),
