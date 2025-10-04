@@ -77,14 +77,18 @@ if DEBUG:
     ]
     CORS_ALLOWED_ORIGIN_REGEXES = []
 else:
-    # Production CORS settings
+    # Production CORS settings - Allow both production and development
     CORS_ALLOWED_ORIGINS = [
         "https://horizonix.vercel.app",
         "https://horizonixsocialmediaapp.vercel.app",
+        "http://localhost:5173",  # For local development
+        "http://127.0.0.1:5173",  # For local development
     ]
-    # Allow Vercel preview URLs
+    # Allow Vercel preview URLs and localhost for development
     CORS_ALLOWED_ORIGIN_REGEXES = [
         r"^https:\/\/.*\.vercel\.app$",
+        r"^http:\/\/localhost:\d+$",  # Allow any localhost port
+        r"^http:\/\/127\.0\.0\.1:\d+$",  # Allow any 127.0.0.1 port
     ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -141,6 +145,8 @@ else:
     CSRF_TRUSTED_ORIGINS = [
         "https://horizonix.vercel.app",
         "https://horizonixsocialmediaapp.vercel.app",
+        "http://localhost:5173",  # For local development
+        "http://127.0.0.1:5173",  # For local development
         # Trust all Vercel preview deployments
         "https://*.vercel.app",
     ]
