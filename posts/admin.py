@@ -10,11 +10,12 @@ class PostImageInline(admin.TabularInline):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("id", "author", "created_at")
+    list_display = ("id", "author", "is_pinned", "created_at")
     search_fields = ("content",)
-    list_filter = ("created_at",)
-    fields = ("author", "content")
+    list_filter = ("is_pinned", "created_at")
+    fields = ("author", "content", "is_pinned")
     inlines = [PostImageInline]
+    list_editable = ("is_pinned",)
 
 
 @admin.register(Like)

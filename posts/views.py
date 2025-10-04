@@ -12,7 +12,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 @parser_classes([MultiPartParser, FormParser])
 def list_create_posts(request):
     if request.method == 'GET':
-        posts = Post.objects.select_related('author').prefetch_related('images', 'likes', 'comments', 'shares').order_by('-created_at')
+        posts = Post.objects.select_related('author').prefetch_related('images', 'likes', 'comments', 'shares').order_by('-is_pinned', '-created_at')
         serializer = PostSerializer(posts, many=True, context={'request': request})
         return Response(serializer.data)
 

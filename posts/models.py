@@ -6,6 +6,7 @@ from django.core.validators import FileExtensionValidator
 class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField(blank=True)
+    is_pinned = models.BooleanField(default=False, help_text="Pin this post to the top of the feed")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
