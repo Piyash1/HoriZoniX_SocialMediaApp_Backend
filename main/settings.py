@@ -55,9 +55,10 @@ MIDDLEWARE = [
 
 # CORS configuration
 # Allow credentials and restrict allowed origins so cookies work cross-site
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False').lower() == 'true'
+# Temporarily allow all origins for development - change to False in production
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True').lower() == 'true'
 
-# Define allowed origins
+# Define allowed origins - more permissive for development
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -67,9 +68,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://horizonixsocialmediaapp.vercel.app",
 ]
 
-# Also allow common Vercel preview URLs
+# Also allow common Vercel preview URLs and localhost patterns
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https:\/\/.*\.vercel\.app$",
+    r"^http:\/\/localhost:\d+$",  # Allow any localhost port
+    r"^http:\/\/127\.0\.0\.1:\d+$",  # Allow any 127.0.0.1 port
 ]
 
 # Debug CORS in production

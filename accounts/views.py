@@ -312,7 +312,13 @@ def register(request):
             last_name=last_name,
         )
         # Send email verification
-        send_verification_email(user)
+        try:
+            send_verification_email(user)
+        except Exception as email_error:
+            print(f"Email sending failed: {email_error}")
+            # Don't fail registration if email fails, but log it
+            pass
+        
     except Exception as e:
         print(f"Register error: {e}")  # Debug log
         return Response({'error': f'Registration failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
