@@ -53,33 +53,32 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS configuration
-# Allow credentials and restrict allowed origins so cookies work cross-site
-# Temporarily allow all origins for development - change to False in production
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True').lower() == 'true'
+# CORS configuration - Force allow all origins for now
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_HEADERS = True
+CORS_ALLOW_ALL_METHODS = True
 
-# Define allowed origins - more permissive for development
+# Define allowed origins as backup
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:5173",  # Allow local development
-    "http://127.0.0.1:5173",  # Allow local development
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "https://horizonix.vercel.app",
     "https://horizonixsocialmediaapp.vercel.app",
+    "*",  # Allow all origins
 ]
 
-# Also allow common Vercel preview URLs and localhost patterns
+# Allow all origin patterns
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https:\/\/.*\.vercel\.app$",
-    r"^http:\/\/localhost:\d+$",  # Allow any localhost port
-    r"^http:\/\/127\.0\.0\.1:\d+$",  # Allow any 127.0.0.1 port
+    r".*",  # Allow all patterns
 ]
 
 # Debug CORS in production
-if not DEBUG:
-    print(f"CORS_ALLOW_ALL_ORIGINS: {CORS_ALLOW_ALL_ORIGINS}")
-    print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
-    print(f"CORS_ALLOWED_ORIGIN_REGEXES: {CORS_ALLOWED_ORIGIN_REGEXES}")
+print(f"CORS_ALLOW_ALL_ORIGINS: {CORS_ALLOW_ALL_ORIGINS}")
+print(f"CORS_ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+print(f"CORS_ALLOWED_ORIGIN_REGEXES: {CORS_ALLOWED_ORIGIN_REGEXES}")
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
