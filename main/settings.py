@@ -20,17 +20,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # DEBUG setting - can be set via environment variable or command line
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes', 'on')
 
-# Production security settings
-if not DEBUG:
-    ALLOWED_HOSTS = [
-        'localhost',
-        '127.0.0.1',
-        '.onrender.com',  # Render domain
-        '.vercel.app',    # Vercel domain for frontend
-        'horizonix-backend.onrender.com',  # Your specific Render domain
-    ]
-else:
-    ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -66,30 +56,18 @@ MIDDLEWARE = [
 # CORS configuration
 # Allow credentials and restrict allowed origins so cookies work cross-site
 CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://horizonix.vercel.app",
+]
 
-if DEBUG:
-    # Development CORS settings
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ]
-    CORS_ALLOWED_ORIGIN_REGEXES = []
-else:
-    # Production CORS settings - Allow both production and development
-    CORS_ALLOWED_ORIGINS = [
-        "https://horizonix.vercel.app",
-        "https://horizonixsocialmediaapp.vercel.app",
-        "http://localhost:5173",  # For local development
-        "http://127.0.0.1:5173",  # For local development
-    ]
-    # Allow Vercel preview URLs and localhost for development
-    CORS_ALLOWED_ORIGIN_REGEXES = [
-        r"^https:\/\/.*\.vercel\.app$",
-        r"^http:\/\/localhost:\d+$",  # Allow any localhost port
-        r"^http:\/\/127\.0\.0\.1:\d+$",  # Allow any 127.0.0.1 port
-    ]
+# Also allow common Vercel preview URLs
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.vercel\.app$",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
@@ -134,22 +112,17 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False  # Must be False for JavaScript access
 SESSION_COOKIE_DOMAIN = None
 
-if DEBUG:
-    CSRF_TRUSTED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ]
-else:
-    CSRF_TRUSTED_ORIGINS = [
-        "https://horizonix.vercel.app",
-        "https://horizonixsocialmediaapp.vercel.app",
-        "http://localhost:5173",  # For local development
-        "http://127.0.0.1:5173",  # For local development
-        # Trust all Vercel preview deployments
-        "https://*.vercel.app",
-    ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://horizonix-backend.onrender.com",
+    # Add your frontend domain here when you deploy it
+    "https://horizonix.vercel.app",
+    # Trust all Vercel preview deployments
+    "https://*.vercel.app",
+]
 
 ROOT_URLCONF = 'main.urls'
 
